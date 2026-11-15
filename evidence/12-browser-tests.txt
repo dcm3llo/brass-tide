@@ -1,0 +1,12 @@
+SCREENSHOT "02-deployment.jpg"
+START {"started":true,"webgl":true}
+SCREENSHOT "03-requisition.jpg"
+MOVE {"x":-0.7357168728957838,"z":15.071453588458397}
+PAUSE {"frozen":true,"resumed":true}
+FIRE {"ammo":20}
+RELOAD {"ammo":24,"reserve":92}
+GRENADE {"consumed":true,"exploded":true}
+SCREENSHOT "01-coastal-works.jpg"
+FLANK {"phase":"over","player":{"id":0,"team":0,"x":-13.645828778717705,"z":1.8666344377632007,"vx":-0.22907593118562586,"vz":-4.093592111531401,"yaw":0.05504283733500972,"hp":0,"armor":15.174999999999997,"crouch":false,"weapon":"rifle","ammo":24,"reserve":92,"reload":0,"cooldown":0,"heat":0,"cash":4050,"frag":0,"kills":0,"route":0,"wait":0.5,"alert":4,"lastX":3.279926580126779,"lastZ":-0.7646645406749275,"progress":0},"score":[0,1],"actors":[{"id":0,"x":-13.645828778717705,"z":1.8666344377632007,"hp":0},{"id":1,"x":0.03593196892318215,"z":10.115236817479504,"hp":0},{"id":2,"x":2.3499312180765908,"z":10.030268705333224,"hp":0},{"id":3,"x":-10.010928122140669,"z":-0.07342975547770535,"hp":68.1},{"id":4,"x":3.279926580126779,"z":-0.7646645406749275,"hp":100},{"id":5,"x":-0.8755434628322242,"z":-11.653750479706765,"hp":44.175000000000004}]}
+SCREENSHOT "04-field-operation.jpg"
+PASS {"errors":[],"consoleErrors":[],"requests":13,"network":"localhost only","drawCalls":192,"phase":"over","round":1,"score":[0,1]}

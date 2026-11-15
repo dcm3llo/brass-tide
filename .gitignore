@@ -1,0 +1,15 @@
+out/
+out-a/
+out-b/
+transcripts/
+*.tar.gz
+*.bundle
+bundles/
+node_modules/
+READY.json
+.env
+.env.*
+wallet*.json
+playwright-report/
+test-results/
+evidence/preview-*.jpg

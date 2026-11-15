@@ -1,0 +1,14 @@
+✔ collision slides along cover without tunnelling (1.3367ms)
+✔ headshots exceed body damage; armor absorbs and death is clamped (1.035ms)
+✔ ray intersects nearest slab and rejects a miss (0.2479ms)
+✔ ammo depletes, cooldown gates fire, reload conserves reserve (0.8012ms)
+✔ buy is spawn/phase/cash restricted and grants the actual weapon (0.2687ms)
+✔ reload cannot create rounds or fire while loading (1.1555ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 6
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 100.9779

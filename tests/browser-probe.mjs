@@ -1,0 +1,13 @@
+import { chromium } from 'file:///C:/Users/zalta/AppData/Local/hermes/cache/scratch/brass-browser/node_modules/playwright-core/index.mjs';
+import {writeFileSync} from 'node:fs';
+const browser=await chromium.launch({executablePath:'C:/Program Files/Google/Chrome/Application/chrome.exe',headless:true,args:['--enable-webgl','--ignore-gpu-blocklist','--enable-unsafe-swiftshader']});
+const page=await browser.newPage({viewport:{width:1280,height:720},deviceScaleFactor:1});const errors=[];page.on('pageerror',e=>{errors.push(e.message);console.log('PAGE ERROR',e.stack)});page.on('console',m=>console.log('CONSOLE',m.type(),m.text()));page.on('response',r=>{if(r.status()>=400)console.log('HTTP',r.status(),r.url())});
+await page.goto('http://127.0.0.1:8087');await page.waitForFunction(()=>window.brassTide);await page.waitForTimeout(1500);
+await page.screenshot({path:'evidence/preview-start.jpg',type:'jpeg',quality:85});
+await page.click('#deploy');await page.waitForTimeout(500);
+console.log('START',JSON.stringify(await page.evaluate(()=>window.brassTide.snapshot())));
+await page.keyboard.press('KeyB');await page.click('[data-buy="armor"]');await page.click('#closeBuy');
+await page.keyboard.down('KeyW');await page.waitForTimeout(1300);await page.keyboard.up('KeyW');
+await page.waitForTimeout(12000);await page.screenshot({path:'evidence/preview-play.jpg',type:'jpeg',quality:85});
+console.log('PLAY',JSON.stringify(await page.evaluate(()=>window.brassTide.snapshot())));console.log('ERRORS',JSON.stringify(errors));
+await browser.close();

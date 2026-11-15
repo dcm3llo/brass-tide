@@ -1,0 +1,11 @@
+✔ collision slides along cover without tunnelling (1.0329ms)
+✔ headshots exceed body damage; armor absorbs and death is clamped (0.6369ms)
+✔ ray intersects nearest slab and rejects a miss (0.1608ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 3
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 76.778

@@ -1,0 +1,70 @@
+bot soak {"shots":325,"rounds":1,"score":[0,1],"round":2,"actors":[{"id":0,"hp":100,"x":-3,"z":17,"route":0},{"id":1,"hp":100,"x":0,"z":9.564999999999902,"route":0},{"id":2,"hp":100,"x":9.755317843608683,"z":13.450285512775968,"route":0},{"id":3,"hp":100,"x":-12.861352868912132,"z":-8.9330017498905,"route":2},{"id":4,"hp":100,"x":11.376365297681183,"z":-11.829891987461881,"route":1},{"id":5,"hp":100,"x":0,"z":-12.430000000000115,"route":0}]}
+✖ real body/head trace, wall occlusion and firing damage (3.7581ms)
+✔ grenade is consumed, travels and explodes through simulation only (23.9357ms)
+✔ bots move, shoot and resolve actual live rounds without scripted victories (263.3476ms)
+✔ collision slides along cover without tunnelling (1.003ms)
+✔ headshots exceed body damage; armor absorbs and death is clamped (1.0442ms)
+✔ ray intersects nearest slab and rejects a miss (0.5467ms)
+✔ buy expires into a live round; elimination rewards and next round resets (1.4233ms)
+✔ plant needs live site proximity and hold; armed charge survives attacker elimination (0.3678ms)
+✔ defuse wins, timeout loses, first to five ends match (0.466ms)
+✔ ammo depletes, cooldown gates fire, reload conserves reserve (0.9584ms)
+✔ buy is spawn/phase/cash restricted and grants the actual weapon (0.2194ms)
+✔ reload cannot create rounds or fire while loading (1.0011ms)
+ℹ tests 12
+ℹ suites 0
+ℹ pass 11
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 390.4216
+
+✖ failing tests:
+
+test at tests\combat.test.mjs:3:1
+✖ real body/head trace, wall occlusion and firing damage (3.7581ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + null
+  - {
+  -   alert: 0,
+  -   ammo: 24,
+  -   armor: 0,
+  -   cash: 3200,
+  -   cooldown: 0,
+  -   crouch: false,
+  -   frag: 1,
+  -   heat: 0,
+  -   hp: 100,
+  -   id: 3,
+  -   kills: 0,
+  -   lastX: -10,
+  -   lastZ: -16,
+  -   progress: 0,
+  -   reload: 0,
+  -   reserve: 96,
+  -   route: 0,
+  -   team: 1,
+  -   vx: 0,
+  -   vz: 0,
+  -   wait: 1.1600000000000001,
+  -   weapon: 'rifle',
+  -   x: -13,
+  -   yaw: 0,
+  -   z: -3
+  - }
+  
+      at TestContext.<anonymous> (file:///C:/Users/zalta/makefun-events/threejs-fps-02/tests/combat.test.mjs:5:37)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1397:25)
+      at Test.start (node:internal/test_runner/test:1257:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: null,
+    expected: { id: 3, team: 1, x: -13, z: -3, vx: 0, vz: 0, yaw: 0, hp: 100, armor: 0, crouch: false, weapon: 'rifle', ammo: 24, reserve: 96, reload: 0, cooldown: 0, heat: 0, cash: 3200, frag: 1, kills: 0, route: 0, wait: 1.1600000000000001, alert: 0, lastX: -10, lastZ: -16, progress: 0 },
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

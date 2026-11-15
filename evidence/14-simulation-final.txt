@@ -1,0 +1,22 @@
+bot soak {"shots":228,"rounds":3,"score":[0,3],"round":4,"actors":[{"id":0,"hp":100,"x":-3,"z":17,"route":0},{"id":1,"hp":100,"x":0,"z":13.039999999999951,"route":0},{"id":2,"hp":100,"x":8.670106706313005,"z":16.36998814374304,"route":0},{"id":3,"hp":100,"x":-12.060985364213785,"z":-12.935989491319425,"route":1},{"id":4,"hp":100,"x":11.508512493507713,"z":-15.547607782506315,"route":1},{"id":5,"hp":100,"x":0,"z":-15.905000000000165,"route":0}]}
+✔ real body/head trace, wall occlusion and firing damage (1.4313ms)
+✔ grenade is consumed, travels and explodes through simulation only (12.6ms)
+✔ bots move, shoot and resolve actual live rounds without scripted victories (224.653ms)
+✔ collision slides along cover without tunnelling (1.2345ms)
+✔ headshots exceed body damage; armor absorbs and death is clamped (1.0204ms)
+✔ ray intersects nearest slab and rejects a miss (0.3371ms)
+✔ buy expires into a live round; elimination rewards and next round resets (1.3664ms)
+✔ plant needs live site proximity and hold; armed charge survives attacker elimination (0.4823ms)
+✔ defuse wins, timeout loses, first to five ends match (0.4504ms)
+✔ moving and sustained bursts punish accuracy; ADS/crouch tighten it (1.5308ms)
+✔ ammo depletes, cooldown gates fire, reload conserves reserve (0.3003ms)
+✔ buy is spawn/phase/cash restricted and grants the actual weapon (0.2732ms)
+✔ reload cannot create rounds or fire while loading (0.1785ms)
+ℹ tests 13
+ℹ suites 0
+ℹ pass 13
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 331.2952
