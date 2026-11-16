@@ -9,6 +9,7 @@ test('grenade is consumed, travels and explodes through simulation only',()=>{
  const s=createMatch();s.phase='live';assert.equal(throwFrag(s,s.actors[0],0),true);assert.equal(s.actors[0].frag,0);assert.equal(throwFrag(s,s.actors[0],0),false);for(let i=0;i<110;i++)stepWorld(s,1/60);assert.ok(s.events.some(e=>e.type==='blast'));
 });
 test('bots move, shoot and resolve actual live rounds without scripted victories',()=>{
- const s=createMatch();let shots=0,rounds=0;for(let i=0;i<60*120;i++){stepWorld(s,1/60);for(const e of s.events){if(e.type==='shot')shots++;if(e.type==='round')rounds++;}s.events.length=0;}
- assert.ok(shots>15);assert.ok(rounds>0);assert.ok(s.round>1);assert.ok(s.actors.some(a=>a.id>0&&a.route>0));console.log('bot soak',JSON.stringify({shots,rounds,score:s.score,round:s.round,actors:s.actors.map(a=>({id:a.id,hp:a.hp,x:a.x,z:a.z,route:a.route}))}));
+ const s=createMatch();let shots=0,rounds=0,moved=false;for(let i=0;i<60*120;i++){stepWorld(s,1/60);moved ||= s.actors.some(a=>a.id>0&&a.route>0);for(const e of s.events){if(e.type==='shot')shots++;if(e.type==='round')rounds++;}s.events.length=0;}
+ // A buy phase at the final tick legitimately resets all route counters.
+ assert.ok(shots>15);assert.ok(rounds>0);assert.ok(s.round>1);assert.ok(moved);console.log('bot soak',JSON.stringify({shots,rounds,score:s.score,round:s.round}));
 });

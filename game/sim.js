@@ -1,4 +1,5 @@
 // Pure fixed-step simulation. Coordinates are metres; actors stand on y=0.
+import {sites} from './map.js';
 export const DT=1/60;
 export const WEAPONS={
  pistol:{name:'P9 / SIDEARM',cost:300,mag:12,reserve:60,damage:26,delay:.26,load:1.3,spread:.009,recoil:.024},
@@ -15,28 +16,82 @@ export function buy(a,item,allowed){
  if(cost===undefined||a.cash<cost||item==='armor'&&a.armor>=100||item==='frag'&&a.frag>=2)return false;
  a.cash-=cost;if(item==='armor')a.armor=100;else if(item==='frag')a.frag++;else{a.weapon=item;a.ammo=WEAPONS[item].mag;a.reserve=WEAPONS[item].reserve;a.reload=0;a.cooldown=0;}return true;
 }
-export function actor(id,team,x,z){return {id,team,x,z,vx:0,vz:0,yaw:0,hp:100,armor:0,crouch:false,weapon:'rifle',ammo:24,reserve:96,reload:0,cooldown:0,heat:0,cash:3200,frag:1,kills:0,route:0,wait:0,alert:0,lastX:x,lastZ:z,progress:0};}
+export function actor(id,team,x,z){return {id,team,x,z,vx:0,vz:0,yaw:0,hp:100,armor:0,crouch:false,weapon:'rifle',ammo:24,reserve:96,reload:0,cooldown:0,heat:0,cash:3200,frag:1,kills:0,deaths:0,roundKills:0,income:0,route:0,wait:0,alert:0,lastX:x,lastZ:z,progress:0,action:null,role:'deploy'};}
 export const SPAWNS=[[-3,17],[0,18],[3,17],[-10,-16],[9,-15],[0,-19]];
-export function createMatch(){const s={actors:SPAWNS.map((v,i)=>actor(i,i<3?0:1,...v)),score:[0,0],round:0,phase:'buy',time:12,bomb:{planted:false,time:30},reason:'',winner:-1,events:[],elapsed:0};newRound(s);return s;}
-export function newRound(s){
- s.round++;s.phase='buy';s.time=12;s.bomb={planted:false,time:30};s.reason='';
- for(const a of s.actors){a.x=SPAWNS[a.id][0];a.z=SPAWNS[a.id][1];a.vx=a.vz=0;a.hp=100;a.armor=a.id?50:a.armor;a.ammo=WEAPONS[a.weapon].mag;a.reserve=WEAPONS[a.weapon].reserve;a.reload=a.cooldown=a.heat=a.progress=a.route=a.alert=0;a.frag=Math.max(1,a.frag);a.wait=.5+a.id*.22;}
+export function createMatch({playerTeam=0,mode='match'}={}){
+ playerTeam=playerTeam===1?1:0;
+ const s={mode:mode==='drill'?'drill':'match',playerTeam,actors:SPAWNS.map((v,i)=>actor(i,i<3?playerTeam:1-playerTeam,...v)),score:[0,0],round:0,phase:'buy',time:12,bomb:null,reason:'',winner:-1,events:[],elapsed:0,history:[]};
+ if(s.mode==='drill'){s.actors=s.actors.slice(0,1);s.actors[0].team=0;s.playerTeam=0;}
+ newRound(s);return s;
 }
-export function finishRound(s,team,reason){if(s.phase==='over'||s.phase==='match')return;s.score[team]++;s.winner=team;s.reason=reason;s.time=5;s.phase=s.score[team]>=5?'match':'over';for(const a of s.actors)a.cash=Math.min(12000,a.cash+(a.team===team?2400:1500));s.events.push({type:'round',team,reason});}
-export function objective(s,a,dt){
- if(s.phase!=='live'||a.hp<=0||Math.hypot(a.x,a.z+14)>2.8)return false;
- if((a.team===0&&!s.bomb.planted)||(a.team===1&&s.bomb.planted)){
- a.progress+=dt;const need=a.team===0?3:5;
- if(a.progress>=need){a.progress=0;if(a.team===0){s.bomb.planted=true;s.bomb.time=30;a.cash+=300;s.events.push({type:'plant'});}else finishRound(s,1,'Charge defused');return true;}
- }return false;
+export function newRound(s){
+ s.round++;s.phase='buy';s.time=12;s.bomb={planted:false,dropped:false,time:30,carrier:s.actors.find(a=>a.team===0).id,site:null,x:0,z:-14};s.reason='';s.grenades=[];
+ s.attackSite=sites[(s.round-1)%sites.length].id;
+ for(const a of s.actors){
+  const spawn=SPAWNS[a.team*3+a.id%3];a.x=spawn[0];a.z=spawn[1];
+  if(a.hp<=0){a.weapon='pistol';a.armor=0;a.frag=0;}
+  a.vx=a.vz=0;a.hp=100;a.crouch=false;a.yaw=a.team===0?0:Math.PI;
+  a.ammo=WEAPONS[a.weapon].mag;a.reserve=WEAPONS[a.weapon].reserve;
+  a.reload=a.cooldown=a.heat=a.progress=a.route=a.alert=a.roundKills=0;a.action=null;
+  a.path=[];a.replan=0;a.wait=.5+a.id*.22;a.role='deploy';a.memory=null;a.targetId=null;a.goalX=null;a.goalZ=null;a.useHP=null;a.useX=null;a.useZ=null;a.footstepAt=0;a.lastX=a.x;a.lastZ=a.z;
+  if(a.id>0){if(a.weapon==='pistol')buy(a,'rifle',true);if(a.armor<50)buy(a,'armor',true);if(!a.frag)buy(a,'frag',true);}
+ }
+}
+export function finishRound(s,team,reason){
+ if(s.phase==='over'||s.phase==='match')return;
+ s.score[team]++;s.winner=team;s.reason=reason;s.time=5;s.phase=s.score[team]>=5||s.mode==='drill'?'match':'over';
+ for(const a of s.actors){a.income=a.team===team?2400:1500;a.cash=Math.min(12000,a.cash+a.income);cancelUse(a);}
+ s.history.push({round:s.round,team,reason,site:s.bomb.site});
+ s.events.push({type:'round',team,reason});
+}
+export function cancelUse(a){a.progress=0;a.action=null;}
+export function syncCharge(s){
+ const b=s.bomb,a=s.actors[b.carrier];
+ if(b.planted||b.carrier===null||!a)return;
+ b.x=a.x;b.z=a.z;
+ if(a.hp<=0){b.carrier=null;b.dropped=true;cancelUse(a);s.events.push({type:'drop',id:a.id,x:b.x,z:b.z});}
+}
+export function objective(s,a,dt,held=true){
+ syncCharge(s);
+ if(held&&s.phase==='live'&&a.hp>0&&a.team===0&&s.bomb.dropped&&Math.hypot(a.x-s.bomb.x,a.z-s.bomb.z)<1.3){
+  s.bomb.carrier=a.id;s.bomb.dropped=false;cancelUse(a);s.events.push({type:'recover',id:a.id});return true;
+ }
+ const site=sites.find(v=>Math.hypot(a.x-v.x,a.z-v.z)<=v.r);
+ const planting=a.team===0&&!s.bomb.planted&&s.bomb.carrier===a.id&&site;
+ const defusing=a.team===1&&s.bomb.planted&&Math.hypot(a.x-s.bomb.x,a.z-s.bomb.z)<2;
+ if(!held||s.phase!=='live'||a.hp<=0||a.reload>0||Math.hypot(a.vx,a.vz)>.3||(!planting&&!defusing)){cancelUse(a);return false;}
+ const action=planting?'plant '+site.id:'defuse';
+ if(a.action!==action||a.useHP!==a.hp||Math.hypot(a.x-a.useX,a.z-a.useZ)>.15){
+  cancelUse(a);a.action=action;a.useHP=a.hp;a.useX=a.x;a.useZ=a.z;
+ }
+ a.progress+=dt;const need=planting?3:5;
+ if(a.progress+1e-8<need)return false;
+ cancelUse(a);
+ if(planting){
+  Object.assign(s.bomb,{planted:true,time:30,carrier:null,site:site.id,x:a.x,z:a.z});
+  a.cash+=300;s.events.push({type:'plant',id:a.id,site:site.id});
+  if(s.mode==='drill'){a.team=1;s.playerTeam=1;}
+ }else{a.cash+=300;s.events.push({type:'defuse',id:a.id,site:s.bomb.site});finishRound(s,1,'Charge defused');}
+ return true;
 }
 export function stepRound(s,dt){
+ syncCharge(s);
  s.elapsed+=dt;if(s.phase==='match')return;s.time-=dt;
  if(s.phase==='buy'){if(s.time<=0){s.phase='live';s.time=85;}return;}
  if(s.phase==='over'){if(s.time<=0)newRound(s);return;}
+ if(s.mode==='drill'){if(s.actors[0].hp<=0)finishRound(s,1,'Operator down');else if(s.bomb.planted){s.bomb.time-=dt;if(s.bomb.time<=0)finishRound(s,0,'Charge detonated');}else if(s.time<=0)finishRound(s,1,'Drill timed out');return;}
  const blue=s.actors.some(a=>a.team===0&&a.hp>0),red=s.actors.some(a=>a.team===1&&a.hp>0);
  if(s.bomb.planted){s.bomb.time-=dt;if(s.bomb.time<=0)finishRound(s,0,'Floodgate breached');else if(!red)finishRound(s,0,'Spillway secured');}
  else if(!blue)finishRound(s,1,'Attack team eliminated');else if(!red)finishRound(s,0,'Defense eliminated');else if(s.time<=0)finishRound(s,1,'Floodgate held');
+}
+export function movePlayer(s,input,dt,walls){
+ const p=s.actors[0];if(p.hp<=0||!['live','buy'].includes(s.phase))return;
+ p.crouch=input.crouch;p.yaw=input.yaw;
+ const {forward,right,yaw}=input,length=Math.hypot(forward,right)||1,speed=p.crouch?1.65:input.ads?2.25:4.1;
+ const tx=(-Math.sin(yaw)*forward+Math.cos(yaw)*right)/length*speed,tz=(-Math.cos(yaw)*forward-Math.sin(yaw)*right)/length*speed;
+ const smoothing=1-Math.exp(-dt*(forward||right?11:16));p.vx+=(tx-p.vx)*smoothing;p.vz+=(tz-p.vz)*smoothing;
+ const x=p.x,z=p.z;moveActor(p,p.vx,p.vz,dt,walls);
+ if(s.phase==='buy'&&(p.team===0?p.z<12:p.z>-14)){p.z=z;p.x=x;}
 }
 export function moveActor(a,dx,dz,dt,walls){
  const n=Math.max(1,Math.ceil(Math.max(Math.abs(dx*dt),Math.abs(dz*dt))/.15)),r=.33;
@@ -50,7 +105,7 @@ export function moveActor(a,dx,dz,dt,walls){
 export function hurt(a,base,head=false){
  if(a.hp<=0)return 0;
  let damage=base*(head?3.5:1); const blocked=Math.min(a.armor,damage*.45);
- a.armor-=blocked; damage-=blocked; a.hp=Math.max(0,a.hp-damage);return damage;
+ a.armor-=blocked; damage-=blocked; a.hp=Math.max(0,a.hp-damage);if(a.hp<=0)a.deaths++;return damage;
 }
 export function rayBox(ox,oy,oz,dx,dy,dz,b){
  let lo=0,hi=Infinity;

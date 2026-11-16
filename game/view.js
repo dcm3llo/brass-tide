@@ -1,5 +1,5 @@
 import * as T from 'three';
-import {walls} from './map.js';
+import {walls,sites} from './map.js';
 const cream=0xd9c9aa,ink=0x243b40,copper=0xb16c45,teal=0x247f82;
 export class View{
  constructor(canvas){
@@ -57,9 +57,15 @@ export class View{
   this.sign('07   BREACH',-7,4.2,-7.43,5.7,1,0,'CHARGE SITE  ↑');
   this.sign('EAST  →',8,3.7,-9.43,4,1,0,'SPILLWAY ACCESS');
   for(const x of [-2.2,2.2]){this.cylinder(x,.55,-12,.12,1.1,0xd5a75e);for(let y=.2;y<1;y+=.25)this.cylinder(x,y,-12,.125,.11,ink);}
-  this.ring=new T.Mesh(new T.RingGeometry(2.2,2.28,64),new T.MeshBasicMaterial({color:0xeebd6c,side:T.DoubleSide}));this.ring.rotation.x=-Math.PI/2;this.ring.position.set(0,.035,-14);this.scene.add(this.ring);
-  this.sign('A',0,.05,-14,1,1,-0); // ground marker rotated below
-  const marker=this.scene.children[this.scene.children.length-1];marker.rotation.x=-Math.PI/2;
+  this.siteRings=[];
+  for(const site of sites){
+   const ring=new T.Mesh(new T.RingGeometry(site.r-.1,site.r,64),new T.MeshBasicMaterial({color:0xeebd6c,side:T.DoubleSide}));
+   ring.rotation.x=-Math.PI/2;ring.position.set(site.x,.035,site.z);this.scene.add(ring);this.siteRings.push(ring);
+   this.sign(site.id+' / PLANT',site.x,.05,site.z,2.3,1.1,0,site.name);
+   this.scene.children[this.scene.children.length-1].rotation.x=-Math.PI/2;
+  }
+  this.sign('B / INTAKE',10.55,2.7,-5,3.5,1.1,Math.PI/2,'EAST CHANNEL / CHARGE SITE');
+  this.sign('A / SPILLWAY',0,3,-21.4,5,1.1,0,'NORTH / CHARGE SITE');
   // Copper pipes, roof vents, cable lines, and dock edge rails.
   for(const x of [-9,9]){const p=this.cylinder(x,4.9,4,.18,7,copper);p.rotation.z=Math.PI/2;for(let j=0;j<4;j++)this.box(x+(j-1.5),5,4,.1,.7,.7,ink);}
   for(const x of [-16,16])for(let z=-20;z<=20;z+=4){this.box(x,2.7,z,.1,1.4,.1,ink);this.box(x,3.25,z+1.95,.06,.06,4,ink);}
@@ -83,7 +89,8 @@ export class View{
   this.box(.17,1.1,-.48,.13,.15,.8,0x273638,g);this.box(.17,1.13,-.92,.07,.07,.25,0x273638,g);
   // Bright blue/red shoulder patch and backpack identify teams at a glance.
   this.box(0,1.04,.24,.37,.48,.18,color,g);this.box(-.365,1.2,-.08,.03,.13,.18,0xf3d7a2,g);
-  return {g,l,r,body,head};
+  const patch=new T.Mesh(new T.OctahedronGeometry(.2),new T.MeshBasicMaterial({color:0xffdc84}));patch.position.set(0,2.15,0);g.add(patch);patch.visible=false;
+  return {g,l,r,body,head,patch,team:ally?0:1};
  }
  buildWeapon(){
   this.gun=new T.Group();this.camera.add(this.gun);this.gun.position.set(.25,-.26,-.48);
@@ -109,7 +116,7 @@ export class View{
   }
  }
  render(s,input,dt){
-  const p=s.actors[0];let watch=p;if(p.hp<=0)watch=s.actors.find(a=>a.team===0&&a.hp>0)||p;
+  const p=s.actors[0];let watch=p;if(p.hp<=0)watch=s.actors.find(a=>a.team===p.team&&a.hp>0)||p;
   const targetY=watch.crouch?1.08:1.62;this.camera.position.set(watch.x,targetY,watch.z);
   this.camera.rotation.set(input.pitch,watch===p?input.yaw:watch.yaw,0);
   const ads=input.ads&&p.hp>0;this.camera.fov+=( (ads?(p.weapon==='marksman'?42:59):76)-this.camera.fov)*Math.min(1,dt*12);this.camera.updateProjectionMatrix();
@@ -119,12 +126,16 @@ export class View{
   this.gun.position.set(ads?.035:.25,-.26+bob-(p.reload>0?.22:0),-.48+Math.min(1,recoil)*.045);this.gun.rotation.set(Math.min(1,recoil)*.07,p.reload>0?-.25:0,p.reload>0?-.35:-bob);
   this.gun.scale.setScalar(p.weapon==='pistol'?.76:1);this.flash.visible=p.cooldown>WEAPON_FLASH[p.weapon];this.flash.rotation.y=s.elapsed*38;
   for(let i=1;i<6;i++){
-   const a=s.actors[i],b=this.bots[i];b.g.position.set(a.x,0,a.z);b.g.rotation.y=a.yaw;
+   const a=s.actors[i],b=this.bots[i];b.g.visible=!!a;if(!a)continue;b.g.position.set(a.x,0,a.z);b.g.rotation.y=a.yaw;
+   if(b.team!==a.team){const old=this.mat(b.team===0?0x388bb0:0xb44e39),next=this.mat(a.team===0?0x388bb0:0xb44e39);b.g.traverse(m=>{if(m.material===old)m.material=next;});b.team=a.team;}
+   b.patch.visible=s.bomb.carrier===a.id&&a.hp>0;
    if(a.hp<=0){b.g.rotation.z=Math.PI/2;b.g.position.y=.25;}
    else{b.g.rotation.z=0;b.g.scale.y=a.crouch?.72:1;const moving=a.wait<=0&&s.phase==='live';b.l.rotation.x=moving?Math.sin(s.elapsed*8+i)*.3:0;b.r.rotation.x=-b.l.rotation.x;}
   }
-  this.charge.visible=s.bomb.planted;this.lamp.visible=s.bomb.planted;this.lamp.material.color.setHex(Math.sin(s.elapsed*9)>0?0xffba54:0xbb4433);
-  this.ring.material.color.setHex(s.bomb.planted?0xeb7b48:0xeebd6c);
+  this.charge.visible=s.bomb.planted||s.bomb.dropped;this.lamp.visible=this.charge.visible;
+  this.charge.position.set(s.bomb.x,.25,s.bomb.z);this.lamp.position.set(s.bomb.x,.49,s.bomb.z);
+  this.lamp.material.color.setHex(Math.sin(s.elapsed*9)>0?0xffba54:0xbb4433);
+  for(let i=0;i<this.siteRings.length;i++)this.siteRings[i].material.color.setHex(s.bomb.planted&&s.bomb.site===sites[i].id?0xeb7b48:0xeebd6c);
   for(let i=0;i<(s.grenades||[]).length;i++){
    const g=s.grenades[i];if(!this.grenadeMeshes[i]){const m=new T.Mesh(new T.SphereGeometry(.13,8,6),this.mat(0x4b6254));this.scene.add(m);this.grenadeMeshes[i]=m;}const m=this.grenadeMeshes[i];m.visible=g.time>0;m.position.set(g.x,g.y,g.z);
   }

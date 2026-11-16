@@ -1,0 +1,6 @@
+# Keep the candidate's static bytes canonical on all checkouts.
+* text eol=lf
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.min.js binary

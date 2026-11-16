@@ -1,7 +1,7 @@
 import {readFileSync,readdirSync,statSync} from 'node:fs';import {join} from 'node:path';import {createHash} from 'node:crypto';import assert from 'node:assert/strict';
 import {buildDossier,readGameTree,htmlFacts,importMapOf,sourceImports,resolveGamePath} from '../vendor/makefun-threejs.ts';
 const hash=b=>createHash('sha256').update(b).digest('hex');
-const kit=process.env.BRASS_KIT??'C:/Users/zalta/AppData/Local/hermes/cache/scratch/threejs-fps-02-kit/starter';
+const kit=process.env.BRASS_KIT??'C:/Users/zalta/makefun-events/upgrades-20261116/threejs-fps-02/fresh-kit/starter';
 for(const path of ['vendor/makefun-threejs.ts','game/vendor/three/three.module.min.js','game/vendor/three/three.core.min.js']){assert.equal(hash(readFileSync(path)),hash(readFileSync(join(kit,path))));console.log('UNCHANGED',path,hash(readFileSync(path)));}
 const tree=readGameTree('game',{game_max_files:993,game_max_bytes:50331648,game_path_max_bytes:1000});const source=tree.files.filter(f=>f.cls==='source');const bytes=source.reduce((n,f)=>n+f.bytes,0);assert.ok(bytes<163840);console.log('SOURCE',source.length,bytes,'bytes; game entries',tree.count,'game bytes',tree.totalBytes);
 const facts=htmlFacts(readFileSync('game/index.html','utf8'));assert.equal(facts.importMaps.length,1);const map=importMapOf(facts).map;assert.equal(map.imports.three,'./vendor/three/three.module.min.js');

@@ -1,4 +1,4 @@
-import { chromium } from 'file:///C:/Users/zalta/AppData/Local/hermes/cache/scratch/brass-browser/node_modules/playwright-core/index.mjs';
+const {chromium}=await import(process.env.PLAYWRIGHT_MODULE??new URL('../../browser-tools/node_modules/playwright-core/index.mjs',import.meta.url).href);
 import {writeFileSync} from 'node:fs';
 const browser=await chromium.launch({executablePath:'C:/Program Files/Google/Chrome/Application/chrome.exe',headless:true,args:['--enable-webgl','--ignore-gpu-blocklist','--enable-unsafe-swiftshader']});
 const page=await browser.newPage({viewport:{width:1280,height:720},deviceScaleFactor:1});const errors=[];page.on('pageerror',e=>{errors.push(e.message);console.log('PAGE ERROR',e.stack)});page.on('console',m=>console.log('CONSOLE',m.type(),m.text()));page.on('response',r=>{if(r.status()>=400)console.log('HTTP',r.status(),r.url())});
