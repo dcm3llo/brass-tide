@@ -1,5 +1,9 @@
 # BRASS TIDE
 
+[![make.fun · threejs-fps-02](https://make.fun/badge/threejs-fps-02.svg)](https://make.fun/bounty/threejs-fps-02?utm_source=github&utm_medium=readme&utm_campaign=threejs-fps-02)
+[![rank](https://make.fun/badge/threejs-fps-02/dcm3llo/brass-tide/rank.svg)](https://make.fun/bounty/threejs-fps-02/leaderboard?utm_source=github&utm_medium=readme&utm_campaign=threejs-fps-02)
+[![reward](https://make.fun/badge/threejs-fps-02/dcm3llo/brass-tide/reward.svg)](https://make.fun/bounty/threejs-fps-02?utm_source=github&utm_medium=readme&utm_campaign=threejs-fps-02)
+
 An original offline 3v3 tactical FPS set at a coastal flood-control station. Lead blue TIDELINE against rust-red BREAKWATER through the cream-concrete works of Sluice 07. First team to five rounds wins.
 
 ## Play
@@ -68,6 +72,6 @@ It drives real start, purchases, movement, crouch, look, pause, fire, reload and
 
 The Node 22-compatible entrypoint copies static game/ and screenshots/ and calls the kit's unchanged buildDossier with the competition caps. It rejects symlinks, checks screenshot count and dossier size, and produces no timestamps or random output. Re-run into out/run-b to compare every file byte for byte. Three.js is the fresh kit's 0.187.0 distribution, unmodified under game/vendor/three.
 
-This repository does not submit entries, contact a wallet, consume an API key, or upload transcripts. Native session bundling, public repository creation/push and make.fun pre-submit checks are intentionally left to the parent workflow. No independent submission has been made.
+No submission has been made. The public repository is https://github.com/dcm3llo/brass-tide. Native session transcripts are bundled separately by the parent workflow; this repository does not submit entries, contact a wallet, consume an API key, or upload transcripts.
 
 MIT license. Three.js retains its included upstream MIT notices.

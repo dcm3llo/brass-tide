@@ -1,0 +1,6 @@
+UNCHANGED vendor/makefun-threejs.ts f9622210e6a0aed70d6f13273a24c9c4a661b5e272edf8fef21197fac6de7969
+UNCHANGED game/vendor/three/three.module.min.js ef510bae547ab3789d6ed543333a8bf42510a8c70743b766c4e19039b976c26b
+UNCHANGED game/vendor/three/three.core.min.js 613e370f76638fdef83926642bf256dc9615684922de1ce1f63a8583e5d78578
+SOURCE 9 50895 bytes; game entries 15 game bytes 2185926
+DETERMINISTIC 18 files; dossier 459324 bytes; sha256 3260230054603f4da03ff8dd93182a72eef5fcf14d569c34bd2b832d0014f628
+LOCAL STRUCTURAL CHECKS PASS (not the sealed server gate)

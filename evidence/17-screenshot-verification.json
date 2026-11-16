@@ -1,0 +1,58 @@
+[
+  {
+    "file": "screenshots\\01-coastal-works.jpg",
+    "bytes": 84130,
+    "size": [
+      1280,
+      720
+    ],
+    "format": "JPEG",
+    "rgb_stddev": [
+      71.87246135739097,
+      63.71631764699743,
+      60.97135601905082
+    ]
+  },
+  {
+    "file": "screenshots\\02-deployment.jpg",
+    "bytes": 89009,
+    "size": [
+      1280,
+      720
+    ],
+    "format": "JPEG",
+    "rgb_stddev": [
+      62.79064512958168,
+      53.97791034525464,
+      48.05630498824148
+    ]
+  },
+  {
+    "file": "screenshots\\03-requisition.jpg",
+    "bytes": 92430,
+    "size": [
+      1280,
+      720
+    ],
+    "format": "JPEG",
+    "rgb_stddev": [
+      69.47674506826645,
+      62.157552522354685,
+      59.33268892475147
+    ]
+  },
+  {
+    "file": "screenshots\\04-field-operation.jpg",
+    "bytes": 62122,
+    "size": [
+      1280,
+      720
+    ],
+    "format": "JPEG",
+    "rgb_stddev": [
+      52.71244949205307,
+      31.247131335342406,
+      22.7109882930328
+    ]
+  }
+]
