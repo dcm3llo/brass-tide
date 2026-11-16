@@ -1,3 +1,0 @@
-PASS: exactly three live badges match fresh requirements with dcm3llo/brass-tide
-PASS: canonical existing MIT license preserved verbatim after SPDX header
-PASS: README records no submission and separate parent-workflow transcript bundling

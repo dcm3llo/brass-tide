@@ -60,7 +60,7 @@ Pure simulation (Node built-in test runner, no dependencies):
 
     node --test tests/physics.test.mjs tests/weapons.test.mjs tests/rounds.test.mjs tests/combat.test.mjs
 
-Actual RED and GREEN runs are preserved under evidence/. The browser test uses locally installed Playwright Core OUTSIDE the repository and the existing Chrome executable; it is not a game or entrypoint dependency. tests/browser.test.mjs documents this machine's exact test setup. Serve the game first, then run:
+Actual RED and GREEN runs and fresh rule snapshots are preserved in the separate local verification dossier (`../threejs-fps-02-evidence/evidence/`), not shipped as game source. Test programs and real browser screenshots remain in this repository. Create `evidence/` locally before running the browser test to store its report. The browser test uses locally installed Playwright Core OUTSIDE the repository and the existing Chrome executable; it is not a game or entrypoint dependency. tests/browser.test.mjs documents this machine's exact test setup. Serve the game first, then run:
 
     node tests/browser.test.mjs
 
